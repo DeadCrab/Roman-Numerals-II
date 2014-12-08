@@ -43,6 +43,7 @@
     <Compile Include="Application Service\RomanNumeralsCalculator.cs" />
     <Compile Include="Domain Service\BaseTenExponentFinder.cs" />
     <Compile Include="Domain Service\Value Objects\CharacterSet.cs" />
+    <Compile Include="Exceptions\RomanNumeralsCalculatorException.cs" />
     <Compile Include="Factories\CharacterSetFactory.cs" />
     <Compile Include="Factories\RomanNumeralsCalculatorFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

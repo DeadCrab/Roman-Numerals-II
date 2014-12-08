@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RomanNumeralsCalculator.Domain_Service;
 using RomanNumeralsCalculator.Domain_Service.Value_Objects;
+using RomanNumeralsCalculator.Exceptions;
 using RomanNumeralsCalculator.Factories;
 
 namespace RomanNumerals.ApplicationService
@@ -18,7 +15,6 @@ namespace RomanNumerals.ApplicationService
 		{
 			_romanNumeral = romanNumeral;
 			_arabicNumber = arabicNumber;
-
 		}
 
 		public String RomanNumeral { get { return _romanNumeral; } }
@@ -28,7 +24,7 @@ namespace RomanNumerals.ApplicationService
 
 	public interface INumeralsCalculator
 	{
-		String GetFullNumeralFrom(int arabicNumeral);
+		String GetFullNumeralFor(int arabicNumeral);
 	}
 
 
@@ -58,7 +54,7 @@ namespace RomanNumerals.ApplicationService
 		/// </summary>
 		/// <param name="arabicNumeral"></param>
 		/// <returns></returns>
-		public String GetFullNumeralFrom(int arabicNumeral)
+		public String GetFullNumeralFor(int arabicNumeral)
 		{
 			_tensHundredsEtc = _exponentFinder.GetExponentFrom(arabicNumeral);
 			_previousExponent = 100;
@@ -71,27 +67,44 @@ namespace RomanNumerals.ApplicationService
 			bool onFirstIteration = true;
 			_subSectionRemainder = 0;
 
-			while (_remainder > 0)
+
+			try
 			{
-				_tensHundredsEtc = _exponentFinder.GetExponentFrom(_remainder);		// We can use the exponent to work out which section of the number we are dealing with e.g. 100's, 10's, 1's
-				if (!onFirstIteration && WeHaveMovedFromOneSectionOfTheNumberToTheNext())
-				{
-					UpdatePreviousExponent();
-					characterSet = _characterLookupFactory.GetCharacterSetFor(_tensHundredsEtc);
-				}
+				if (arabicNumeral <= 0 || arabicNumeral > 3000)
+					throw new RomanNumeralsCalculatorException("Only numbers between 1 and 3000 inclusive are supported");
 
-				if (NotStillPrependingFromPreviousIteration())
-					DeriveBuildModeToUse();
+				while (_remainder > 0)
+				{
+					_tensHundredsEtc = _exponentFinder.GetExponentFrom(_remainder);		// We can use the exponent to work out which section of the number we are dealing with e.g. 100's, 10's, 1's
+					if (!onFirstIteration && WeHaveMovedFromOneSectionOfTheNumberToTheNext())
+					{
+						UpdatePreviousExponent();
+						characterSet = _characterLookupFactory.GetCharacterSetFor(_tensHundredsEtc);
+					}
 
-				if (_mode == BuildMode.BuildSubSectionByPrepending)
-				{
-					BuildSubSectionByPrepending(characterSet);
+					if (NotStillPrependingFromPreviousIteration())
+						DeriveBuildModeToUse();
+
+					if (_mode == BuildMode.BuildSubSectionByPrepending)
+					{
+						BuildSubSectionByPrepending(characterSet);
+					}
+					else
+					{
+						SimplyAppendCharacterToMainString(characterSet);
+					}
+					onFirstIteration = false;
 				}
-				else
-				{
-					SimplyAppendCharacterToMainString(characterSet);
-				}
-				onFirstIteration = false;
+			}
+			catch (RomanNumeralsCalculatorException ex)
+			{
+				throw ex;
+			}
+
+			catch (Exception ex)
+			{
+				// Wrap exceptions in our class so it is clear where the error occurred
+				throw new RomanNumeralsCalculatorException("An error occurred", ex);
 			}
 
 			return _completeNumeral;
@@ -104,7 +117,7 @@ namespace RomanNumerals.ApplicationService
 			if (ProcessingingFirstCharOfSubSection())
 				romanCharacterToAdd = characterSet.GetRomanCharacterFor(_remainder);
 			else
-				romanCharacterToAdd = characterSet.GetRomanCharacterThatCanBePrependedTo(_subNumeral);
+				romanCharacterToAdd = characterSet.GetRomanCharacterThatCanBePrepended();
 
 			PrependToSubNumeral(romanCharacterToAdd);
 
@@ -122,7 +135,7 @@ namespace RomanNumerals.ApplicationService
 			var romanCharacterToAdd = characterSet.GetRomanCharacterFor(_remainder);
 			UpdateMainStringWith(romanCharacterToAdd);
 		}
-		
+
 
 
 		private void PrependToSubNumeral(RomanCharacter romanCharacter)

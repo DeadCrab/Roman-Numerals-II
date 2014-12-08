@@ -5,6 +5,7 @@ using RomanNumeralsCalculator.Factories;
 using RomanNumeralsCalculator.Domain_Service.Value_Objects;
 using RomanNumeralsCalculator.Domain_Service;
 using System.Globalization;
+using RomanNumeralsCalculator.Exceptions;
 
 namespace UnitTests
 {
@@ -12,11 +13,20 @@ namespace UnitTests
 	public class RomanNumeralsCalculatorTests
 	{
 		[TestMethod]
+		[ExpectedException(typeof(RomanNumeralsCalculatorException))]
+		public void aa_zero()
+		{	
+			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
+			var actual = calculator.GetFullNumeralFor(0);			
+		}
+
+
+		[TestMethod]
 		public void a_one()
 		{
 			var expected = "I";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(1);
+			var actual = calculator.GetFullNumeralFor(1);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -26,7 +36,7 @@ namespace UnitTests
 		{
 			var expected = "III";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(3);
+			var actual = calculator.GetFullNumeralFor(3);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -35,7 +45,7 @@ namespace UnitTests
 		{
 			var expected = "IV";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(4);
+			var actual = calculator.GetFullNumeralFor(4);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -44,7 +54,7 @@ namespace UnitTests
 		{
 			var expected = "V";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(5);
+			var actual = calculator.GetFullNumeralFor(5);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -53,7 +63,7 @@ namespace UnitTests
 		{
 			var expected = "VI";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(6);
+			var actual = calculator.GetFullNumeralFor(6);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -62,7 +72,7 @@ namespace UnitTests
 		{
 			var expected = "VIII";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(8);
+			var actual = calculator.GetFullNumeralFor(8);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -71,7 +81,7 @@ namespace UnitTests
 		{
 			var expected = "IX";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(9);
+			var actual = calculator.GetFullNumeralFor(9);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -80,7 +90,7 @@ namespace UnitTests
 		{
 			var expected = "X";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(10);
+			var actual = calculator.GetFullNumeralFor(10);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -90,7 +100,7 @@ namespace UnitTests
 		{
 			var expected = "XIX";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(19);
+			var actual = calculator.GetFullNumeralFor(19);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -100,7 +110,7 @@ namespace UnitTests
 		{
 			var expected = "XX";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(20);
+			var actual = calculator.GetFullNumeralFor(20);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -110,7 +120,7 @@ namespace UnitTests
 		{
 			var expected = "XLIX";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(49);
+			var actual = calculator.GetFullNumeralFor(49);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -119,7 +129,7 @@ namespace UnitTests
 		{
 			var expected = "LI";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(51);
+			var actual = calculator.GetFullNumeralFor(51);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -128,7 +138,7 @@ namespace UnitTests
 		{
 			var expected = "XCIX";	// You can only subtract from the next two highest numbers, so we cannot subtract I from C
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(99);
+			var actual = calculator.GetFullNumeralFor(99);
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -137,10 +147,46 @@ namespace UnitTests
 		{
 			var expected = "CDI";
 			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
-			var actual = calculator.GetFullNumeralFrom(401);
+			var actual = calculator.GetFullNumeralFor(401);
 			Assert.AreEqual(expected, actual);
 		}
 
+
+		[TestMethod]
+		public void l_ninehundredandninety()
+		{
+			var expected = "CMXC";
+			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
+			var actual = calculator.GetFullNumeralFor(990);
+			Assert.AreEqual(expected, actual);
+		}
+
+		[TestMethod]
+		public void m_tensixtysix()
+		{
+			var expected = "MLXVI";
+			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
+			var actual = calculator.GetFullNumeralFor(1066);
+			Assert.AreEqual(expected, actual);
+		}
+
+
+		[TestMethod]
+		public void n_threethousand()
+		{
+			var expected = "MMM";
+			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
+			var actual = calculator.GetFullNumeralFor(3000);
+			Assert.AreEqual(expected, actual);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(RomanNumeralsCalculatorException))]
+		public void aa_threethousandandone()
+		{
+			var calculator = new RomanNumeralsCalculatorFactory().GetNumeralsCalculator();
+			var actual = calculator.GetFullNumeralFor(3001);
+		}
 
 
 		#region base ten exponent finder
@@ -223,48 +269,5 @@ namespace UnitTests
 			Assert.AreEqual(String.Empty, firstFailedInt);
 		}
 		#endregion
-
-
-		//#region RomanCharacterLookup
-		//[TestMethod]
-		//public void find_character_for_one()
-		//{
-		//	var expected = "I";
-		//	var characterFinder = new RomanCharacterLookup();
-		//	var actual = characterFinder.GetRomanCharacterFor(1).RomanNumeral;
-		//	Assert.AreEqual(expected, actual);
-
-		//}
-
-		//[TestMethod]
-		//public void find_character_for_three()
-		//{
-		//	var expected = "I";
-		//	var characterFinder = new RomanCharacterLookup();
-		//	var actual = characterFinder.GetRomanCharacterFor(3).RomanNumeral;
-		//	Assert.AreEqual(expected, actual);
-		//}
-
-		//[TestMethod]
-		//public void find_character_for_four()		// THIS IS THE NEXT TEST TO MAKE PASS
-		//{
-		//	var expected = "V";
-		//	var characterFinder = new RomanCharacterLookup();
-		//	var actual = characterFinder.GetRomanCharacterFor(4).RomanNumeral;
-		//	Assert.AreEqual(expected, actual);
-
-		//}
-
-		//[TestMethod]
-		//public void find_character_for_five()
-		//{
-		//	var expected = "V";
-		//	var characterFinder = new RomanCharacterLookup();
-		//	var actual = characterFinder.GetRomanCharacterFor(5).RomanNumeral;
-		//	Assert.AreEqual(expected, actual);
-
-		//}
-
-		//#endregion
 	}
 }

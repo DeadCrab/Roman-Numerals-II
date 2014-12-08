@@ -19,6 +19,5 @@ namespace RomanNumeralsCalculator.Factories
 
 			return new RomanCharacterSetForExponentTwo();
 		}
-
 	}
 }
